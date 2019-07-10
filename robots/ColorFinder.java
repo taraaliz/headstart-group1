@@ -80,21 +80,21 @@ public class ColorFinder {
 					break;
 				}
 			}*/
-			System.out.println("Scanning...");
-        	int counter = 1;
-        	col = sensor.getColor();
-			while(col != color && counter < 24){
-				if(counter % 2 == 0){
-					turnRight(15*counter);
-				} else {
-					turnLeft(15*counter);
-				}
-				counter++;
-				col = sensor.getColor();
-				if (col == ColorSensor.Color.RED){
-					break;
-				}
+		System.out.println("Scanning...");
+		int counter = 1;
+		col = sensor.getColor();
+		while(col != color && counter < 24){
+			if(counter % 2 == 0){
+				turnRight(15*counter);
+			} else {
+				turnLeft(15*counter);
 			}
+			counter++;
+			col = sensor.getColor();
+			if (col == ColorSensor.Color.RED){
+				break;
+			}
+		}
     }
     
     // This method moves the robot forward by count "steps"
