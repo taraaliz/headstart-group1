@@ -11,13 +11,14 @@ public class ColorFinder {
     private static Motor rightMotor;
     private static Speaker speaker;
     private static ColorSensor sensor;
-    private static ColorSensor.Color col;			
+    private static ColorSensor.Color col;
+    
     
     // This is the "main" method - this is where the program starts
     public static void main(String[] args) {
     	
     	// First, we need to get the Robot object
-    	robot = new Robot("dia-lego-g1");
+    	robot = new Robot("dia-lego-e5");
     	// Then we get our left and right Motor objects and our Speaker object
     	leftMotor = robot.getLargeMotor(Motor.Port.A);
     	rightMotor = robot.getLargeMotor(Motor.Port.B);
@@ -26,8 +27,8 @@ public class ColorFinder {
     	// You can try different speeds for the motors,
     	// but if you run them too fast the code that counts
     	// the steps won't keep up and you will get less accurate movements.
-    	leftMotor.setSpeed(30);
-    	rightMotor.setSpeed(30);
+    	leftMotor.setSpeed(80);
+    	rightMotor.setSpeed(80);
     	
     	
     	// **** Make your changes to these lines below **** //
@@ -35,26 +36,65 @@ public class ColorFinder {
     	// Get a colour sensor (note: we are using the US spelling of color in the code...)
     	sensor = robot.getColorSensor(Sensor.Port.S1);
     	
-    	// Scan to the left for 20 "steps"
-    	scan(false,20,ColorSensor.Color.RED);
-    	// Scan to the right for 20 steps 
-    	// (remember that we will have finished 20 steps to the left, 
-    	// so this is actually covering 20 steps right from where we started)
-    	scan(true,40,ColorSensor.Color.RED);
-    	// The scan method will stop if it finds red
-    	// The col variable is set to the last colour scanned
-    	if(col == ColorSensor.Color.RED) {
-    		// We found red, so play a happy sound
-    		speaker.playTone(440,300);
-    		speaker.playTone(523,200);
-    	} else {
-    		// We didn't, so play a less happy sound...
-    		speaker.playTone(493,200);
-    		speaker.playTone(369,200);	       
-    	}
-    	
+    	//stops on red, goes forward on black
+    	//scan(ColorSensor.Color.BLACK);
+    	while(sensor.getColor() != ColorSensor.Color.RED){
+			while(sensor.getColor() == ColorSensor.Color.BLACK){
+				goForward(50);
+			}
+			scan(ColorSensor.Color.BLACK);
+		}
+		
     	// Close the robot and clean up all the connections to ports.
     	robot.close();
+    }
+    //Scan
+        private static void scan(ColorSensor.Color color) {
+        	/*System.out.println("Scanning...");
+        	boolean right = true;
+        	int counter = 15;
+        	col = sensor.getColor();
+			while(col != color){
+				if(right){
+					right = false;
+					for(int i = 0; i<counter/15; i++){
+						turnRight(15);
+						col = sensor.getColor();
+						if (col == ColorSensor.Color.BLACK){
+							break;
+						}
+					}
+				} else {
+					right = true;
+					for(int i = 0; i<counter/15; i++){
+						turnLeft(15);
+						col = sensor.getColor();
+						if (col == ColorSensor.Color.BLACK){
+							break;
+						}
+					}
+				}
+				counter = counter * 2;
+				col = sensor.getColor();
+				if (col == ColorSensor.Color.RED){
+					break;
+				}
+			}*/
+			System.out.println("Scanning...");
+        	int counter = 1;
+        	col = sensor.getColor();
+			while(col != color && counter < 24){
+				if(counter % 2 == 0){
+					turnRight(15*counter);
+				} else {
+					turnLeft(15*counter);
+				}
+				counter++;
+				col = sensor.getColor();
+				if (col == ColorSensor.Color.RED){
+					break;
+				}
+			}
     }
     
     // This method moves the robot forward by count "steps"
@@ -102,13 +142,16 @@ public class ColorFinder {
     // This method updates the col variable, so 
     // that will be set to the last colour scanned
     // when the method completes.
-    private static void scan(boolean right, int count, ColorSensor.Color color) {
-    	System.out.println("Scanning " + (right ? "right" : "left") + " for " + count);
+    private static void scan(String direction, int count, ColorSensor.Color color) {
+    	System.out.println("Scanning " + direction + " for " + count);
     	for(int i = 0; i < count; i++) {
-    		if(right) {
+    		if(direction.equals("right")) {
     			turnRight(10);
-    		} else {
+    		} else if(direction.equals("left")) {
     			turnLeft(10);
+    		}
+    		else if(direction.equals("forward")) {
+    			goForward(10);
     		}
     		col = sensor.getColor();			
     		if(col == color) {
