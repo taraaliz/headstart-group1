@@ -83,11 +83,12 @@ public class ColorFinder {
 		System.out.println("Scanning...");
 		int counter = 1;
 		col = sensor.getColor();
-		while(col != color && counter < 24){
+		// Scans 180 degrees and then starts again
+		while(col != color && counter < 48){
 			if(counter % 2 == 0){
 				turnRight(15*counter);
 			} else {
-				turnLeft(15*counter);
+				turnLeft(30*counter);
 			}
 			counter++;
 			col = sensor.getColor();
